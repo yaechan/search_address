@@ -6,11 +6,11 @@ require "search_address/version"
 Gem::Specification.new do |spec|
   spec.name          = "search_address"
   spec.version       = SearchAddress::VERSION
-  spec.authors       = ["TODO: Write your name"]
-  spec.email         = ["TODO: Write your email address"]
+  spec.authors       = ["Yuki Yaegashi"]
+  spec.email         = ["xxx.y.a.e.xxx@me.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because RubyGems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
+  spec.summary       = %q{Write a short summary, because RubyGems requires one.}
+  spec.description   = %q{Write a longer description or delete this line.}
   spec.homepage      = "TODO: Put your gem's website or public repo URL here."
   spec.license       = "MIT"
 

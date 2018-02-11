@@ -1,5 +1,12 @@
+require "csv"
+require "pp"
+
 require "search_address/version"
+require "search_address/manager"
+
 
 module SearchAddress
-  # Your code goes here...
+  def self.greet
+    "Hello World!"
+  end
 end

@@ -21,7 +21,10 @@ module SearchAddress
 
     def create
       create_separated_data do |row, row_number|
-         postcode, *address = row.values_at(2, 6, 7, 8)
+         postcode, *address = row.values_at(Define::COLUMN_POSTCODE,
+                                            Define::COLUMN_PREFECTURES,
+                                            Define::COLUMN_CITY,
+                                            Define::COLUMN_TOWN)
 
          address.join
                 .to_ngram_index(2) do |index_key|
@@ -53,24 +56,27 @@ module SearchAddress
 
     def create_separated_data
       @@csv.each_with_index do |row, row_number|
-        postcode, *address = row.values_at(2, 6, 7, 8)
+        postcode, *address = row.values_at(Define::COLUMN_POSTCODE,
+                                           Define::COLUMN_PREFECTURES,
+                                           Define::COLUMN_CITY,
+                                           Define::COLUMN_TOWN)
 
         yield(row, row_number) if block_given?
 
-        if @separated.has_key?(postcode) && row[12] == "0"
+        if @separated.has_key?(postcode) && row[Define::COLUMN_OVER_TOWN_FLAG] == "0"
           @separated[postcode] << address[2]
-        elsif row[12] == "0"
+        elsif row[Define::COLUMN_OVER_TOWN_FLAG] == "0"
           @separated[postcode] = [address[2]]
         end
       end
-      @separated.select { |postcode, row_numbers| row_numbers.length > 1 }
+      @separated.select { |postcode, row_numbers| row_numbers.size > 1 }
     end
   end
 end
 
 class String
   def to_ngram_index(n)
-    each_char.each_cons(2) do |chars|
+    each_char.each_cons(n) do |chars|
       yield chars.join
     end
   end

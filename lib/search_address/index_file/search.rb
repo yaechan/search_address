@@ -16,12 +16,17 @@ module Search
       next if treated_row_numbers.include?(row_number)
 
       treated_row_numbers << row_number
-      postcode, *address = @@csv[row_number].values_at(2, 6, 7, 8)
+      postcode, *address = @@csv[row_number].values_at(SearchAddress::Define::COLUMN_POSTCODE,
+                                                       SearchAddress::Define::COLUMN_PREFECTURES,
+                                                       SearchAddress::Define::COLUMN_CITY,
+                                                       SearchAddress::Define::COLUMN_TOWN)
       address[2] = @separated[postcode].join if @separated.has_key?(postcode)
-      pattern = /^#{key_word.inject("") { |memo, char| memo << "(?=.*#{char})" }}/
+      pattern = /^#{key_word.reduce("") { |memo, char| memo << "(?=.*#{char})" }}/
 
       if address.join.match(pattern)
-        puts address.unshift(postcode).map { |column| column.gsub(/^|$/, "\"") }.join(",")
+        puts address.unshift(postcode)
+                    .map { |column| column.gsub(/^|$/, "\"") }
+                    .join(",")
       end
     end
   end

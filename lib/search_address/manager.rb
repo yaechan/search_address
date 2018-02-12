@@ -47,7 +47,7 @@ module Manager
       1.step do |step_number|
         print "\r\e[2K#{output + ("." * (step_number % 4))}"
         sleep sleep_time
-        STDOUT.flush
+        $stdout.flush
       end
     end
   end

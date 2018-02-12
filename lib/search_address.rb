@@ -6,9 +6,9 @@ require "search_address/define"
 require "search_address/manager"
 require "search_address/index_file"
 
-
-
 module SearchAddress
+  class SearchAddressError < StandardError; end
+
   extend Manager
 
   class << self

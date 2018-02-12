@@ -39,9 +39,16 @@ module SearchAddress
 
     private
     def read_csv_file
-      file  = File.open(Define::CSV_FILE_PATH, "rb:Shift_JIS:UTF-8", undef: :replace)
-      @@csv = CSV.parse(file)
-      file.close
+      if File.exist?(Define::CSV_FILE_PATH)
+        file  = File.open(Define::CSV_FILE_PATH, "rb:Shift_JIS:UTF-8", undef: :replace)
+        @@csv = CSV.parse(file)
+        file.close
+      else
+        raise SearchAddressError, "住所データファイルが存在しません(search_address/download/KEN_ALL.csv)"
+      end
+    rescue SearchAddressError => error
+      puts "\r\e[2K#{error.message}"
+      exit!
     end
 
     def create_separated_data

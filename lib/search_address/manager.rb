@@ -58,7 +58,7 @@ module Manager
 
   def exit_search
     puts "\n終了します"
-    exit 0
+    exit!
   end
 
 end

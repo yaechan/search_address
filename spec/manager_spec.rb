@@ -28,7 +28,7 @@ RSpec.describe Manager do
         sleep 1
         stdout = $stdout.string
       end
-      expect(stdout).to include "\r\e[2K住所データファイルを読み込み中です"
+      expect(stdout).to start_with "\r\e[2K住所データファイルを読み込み中です"
     end
   end
 
@@ -47,7 +47,7 @@ RSpec.describe Manager do
         sleep 1
         stdout = $stdout.string
       end
-      expect(stdout).to include "\r\e[2Kインデックスファイルを読み込み中です"
+      expect(stdout).to start_with "\r\e[2Kインデックスファイルを読み込み中です"
     end
   end
 
@@ -66,7 +66,7 @@ RSpec.describe Manager do
         sleep 1
         stdout = $stdout.string
       end
-      expect(stdout).to include "\r\e[2Kインデックスファイルを作成中です"
+      expect(stdout).to start_with "\r\e[2Kインデックスファイルを作成中です"
     end
   end
 

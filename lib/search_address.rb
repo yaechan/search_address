@@ -1,4 +1,3 @@
-require "csv"
 require "pp"
 
 require "search_address/version"
@@ -21,8 +20,8 @@ module SearchAddress
         create_index_file { index_file.create }
       end
 
-      interactive_operation do |key_word|
-        index_file.search_from_index(key_word)
+      interactive_operation do |key_words|
+        index_file.search_from_index(key_words)
       end
     end
   end

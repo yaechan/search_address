@@ -1,3 +1,4 @@
+require "csv"
 require "yaml"
 require "search_address/index_file/search"
 

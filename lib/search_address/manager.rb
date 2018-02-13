@@ -17,20 +17,20 @@ module Manager
       input = gets
 
       case input
-      when nil
+      when nil, "quit\n"
         exit_search
       when "\n"
         next
       end
 
-      key_word = input.chomp
-                      .encode("UTF-8", undef: :replace)
-                      .gsub(/(\s| )/, "")
-                      .split(//)
+      key_words = input.chomp
+                       .encode("UTF-8", undef: :replace)
+                       .gsub(/(\s| )/, "")
+                       .split(//)
 
       puts "出力:"
 
-      yield key_word
+      yield key_words
 
     end
   end

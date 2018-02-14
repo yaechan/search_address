@@ -65,9 +65,9 @@ module SearchAddress
 
         yield(row, row_number) if block_given?
 
-        if @separated.has_key?(postcode) && row[Define::COLUMN_OVER_TOWN_FLAG] == "0"
+        if @separated.has_key?(postcode) && row[Define::COLUMN_OVER_TOWN_FLAG] == Define::NOT_APPLICABLE
           @separated[postcode] << address[2]
-        elsif row[Define::COLUMN_OVER_TOWN_FLAG] == "0"
+        elsif row[Define::COLUMN_OVER_TOWN_FLAG] == Define::NOT_APPLICABLE
           @separated[postcode] = [address[2]]
         end
       end

@@ -1,14 +1,12 @@
 require "spec_helper"
 
 RSpec.describe SearchAddress::IndexFile do
-  before(:all) do
-    index_file_path = SearchAddress::Define::INDEX_FILE_PATH
-    File.delete(index_file_path) if File.exist?(index_file_path)
-  end
-
   describe ".exist?" do
     it "returns whether existing index file" do
-      expect(SearchAddress::IndexFile).not_to exist
+      index_file_mock = class_double(SearchAddress::IndexFile)
+      allow(index_file_mock).to receive(:exist?).and_return(true)
+
+      expect(index_file_mock).to exist
     end
   end
 
@@ -41,34 +39,55 @@ RSpec.describe SearchAddress::IndexFile do
   end
 
   describe "#create" do
-    before do
-      index_file.create
+    let(:row) do
+      [[nil, nil, "10000001", nil, nil, nil, "都", "区", "町"],
+       [nil, nil, "99999999", nil, nil, nil, "県", "市", "区"]]
+    end
+    let(:row_number) { [1, 2] }
+    let(:data) do
+      { "区町" => [1],
+        "市区" => [2],
+        "県市" => [2],
+        "都区" => [1] }
     end
 
     it "add to @data" do
-      expect(index_file.data.size).to be > 0
-    end
+      create_separated_data_mock = double("create_separated_data")
+      allow(index_file).to receive(:create_separated_data).and_return(create_separated_data_mock)
+                                                          .and_yield(row[0], row_number[0])
+                                                          .and_yield(row[1], row_number[1])
+      allow(index_file).to receive(:create_index_file).and_return(true)
 
-    it "add to @separated" do
-      expect(index_file.separated.size).to be > 0
-    end
-
-    it "create index file" do
-      expect(SearchAddress::IndexFile).to exist
+      index_file.create
+      expect(index_file.data).to eq data
     end
   end
 
   describe "#read" do
-    before(:context) do
-      index_file.read
+    let(:data) do
+      { "区町" => [1],
+        "市区" => [2],
+        "県市" => [2],
+        "都区" => [1] }
     end
 
     it "add to @data" do
-      expect(index_file.data.size).to be > 0
-    end
+      allow(index_file).to receive(:read_index_file).and_return(data)
+      allow(index_file).to receive(:create_separated_data).and_return(true)
 
-    it "add to @separated" do
-      expect(index_file.separated.size).to be > 0
+      index_file.read
+      expect(index_file.data).to eq data
+    end
+  end
+end
+
+
+RSpec.describe String do
+  describe "#to_ngram_index" do
+    let(:key_word) { "都道府県" }
+
+    it "" do
+      expect{ |b| key_word.to_ngram_index(2, &b) }.to yield_successive_args("都道", "道府", "府県")
     end
   end
 end

@@ -2,6 +2,7 @@ require "spec_helper"
 
 RSpec.describe Manager do
   let(:inner_value) { "value" }
+  let(:stdout) { $stdout.string }
 
   before do
     $stdin  = StringIO.new
@@ -23,12 +24,10 @@ RSpec.describe Manager do
     end
 
     it "outputs to stdout in block" do
-      stdout  = nil
       SearchAddress.read_csv_file do
         sleep 1
-        stdout = $stdout.string
+        expect(stdout).to start_with "\r\e[2K住所データファイルを読み込み中です"
       end
-      expect(stdout).to start_with "\r\e[2K住所データファイルを読み込み中です"
     end
   end
 
@@ -42,12 +41,10 @@ RSpec.describe Manager do
     end
 
     it "outputs to stdout in block" do
-      stdout  = nil
       SearchAddress.read_index_file do
         sleep 1
-        stdout = $stdout.string
+        expect(stdout).to start_with "\r\e[2Kインデックスファイルを読み込み中です"
       end
-      expect(stdout).to start_with "\r\e[2Kインデックスファイルを読み込み中です"
     end
   end
 
@@ -61,18 +58,27 @@ RSpec.describe Manager do
     end
 
     it "outputs to stdout in block" do
-      stdout  = nil
       SearchAddress.create_index_file do
         sleep 1
-        stdout = $stdout.string
+        expect(stdout).to start_with "\r\e[2Kインデックスファイルを作成中です"
       end
-      expect(stdout).to start_with "\r\e[2Kインデックスファイルを作成中です"
     end
   end
 
   describe "#interactive_operation" do
-    it "yield with Array" do
-      #expect { |b| SearchAddress.interactive_operation(&b) }.to yield_with_args(Array)
+    let(:key_word) { "渋谷\n" }
+    let(:yield_param) do
+      key_word.chomp
+              .encode("UTF-8", undef: :replace)
+              .gsub(/(\s| )/, "")
+              .split(//)
+    end
+
+    it "" do
+      search_address_mock = class_double(SearchAddress)
+      allow(SearchAddress).to receive(:gets).and_return(key_word)
+
+      expect(SearchAddress.interactive_operation { |key| break key }).to eq yield_param
     end
   end
 end

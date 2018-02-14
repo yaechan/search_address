@@ -33,15 +33,23 @@ module SearchAddress
          end
       end
 
-      YAML.dump(@data, File.open(Define::INDEX_FILE_PATH, "w"))
+      create_index_file
     end
 
     def read
-      @data = File.open(Define::INDEX_FILE_PATH, "r") { |file| YAML.load(file) }
+      @data = read_index_file
       create_separated_data
     end
 
     private
+
+    def create_index_file
+      YAML.dump(@data, File.open(Define::INDEX_FILE_PATH, "w"))
+    end
+
+    def read_index_file
+      File.open(Define::INDEX_FILE_PATH, "r") { |file| YAML.load(file) }
+    end
 
     def read_csv_file
       if File.exist?(Define::CSV_FILE_PATH)

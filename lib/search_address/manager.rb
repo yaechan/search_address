@@ -36,6 +36,7 @@ module Manager
   end
 
   private
+
   def setup_thread(output)
     thread = start_thread(output)
     data   = yield

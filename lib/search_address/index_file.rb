@@ -42,6 +42,7 @@ module SearchAddress
     end
 
     private
+
     def read_csv_file
       if File.exist?(Define::CSV_FILE_PATH)
         file  = File.open(Define::CSV_FILE_PATH, "rb:Shift_JIS:UTF-8", undef: :replace)

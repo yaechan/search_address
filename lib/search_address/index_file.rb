@@ -23,7 +23,7 @@ module SearchAddress
     def create
       create_separated_data do |row, row_number|
          postcode, *address = row.values_at(Define::COLUMN_POSTCODE,
-                                            Define::COLUMN_PREFECTURES,
+                                            Define::COLUMN_PREFECTURE,
                                             Define::COLUMN_CITY,
                                             Define::COLUMN_TOWN)
 
@@ -59,7 +59,7 @@ module SearchAddress
     def create_separated_data
       @@csv.each_with_index do |row, row_number|
         postcode, *address = row.values_at(Define::COLUMN_POSTCODE,
-                                           Define::COLUMN_PREFECTURES,
+                                           Define::COLUMN_PREFECTURE,
                                            Define::COLUMN_CITY,
                                            Define::COLUMN_TOWN)
 

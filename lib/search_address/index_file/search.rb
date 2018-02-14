@@ -19,7 +19,7 @@ module Search
   def search_from_csv(row_numbers, key_words)
     row_numbers.each do |row_number|
       postcode, *address = @@csv[row_number].values_at(SearchAddress::Define::COLUMN_POSTCODE,
-                                                       SearchAddress::Define::COLUMN_PREFECTURES,
+                                                       SearchAddress::Define::COLUMN_PREFECTURE,
                                                        SearchAddress::Define::COLUMN_CITY,
                                                        SearchAddress::Define::COLUMN_TOWN)
       address[2]         = @separated[postcode].join if @separated.has_key?(postcode)

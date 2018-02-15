@@ -2,7 +2,7 @@ require "spec_helper"
 
 RSpec.describe Manager do
   let(:inner_value) { "value" }
-  let(:stdout) { $stdout.string }
+  let(:stdout) { $stdout.string.encode("UTF-8", undef: :replace) }
 
   before do
     $stdin  = StringIO.new
@@ -66,19 +66,41 @@ RSpec.describe Manager do
   end
 
   describe "#interactive_operation" do
-    let(:key_word) { "渋谷\n" }
-    let(:yield_param) do
-      key_word.chomp
-              .encode("UTF-8", undef: :replace)
-              .gsub(/(\s| )/, "")
-              .split(//)
+    let(:key_word)                { "渋谷\n" }
+    let(:key_word_include_space)  { "渋 谷　\n" }
+    let(:yield_param)             { ["渋", "谷"] }
+
+    context "when key_word don't includ space" do
+      it "should retrun array from which impurities has been taken" do
+        allow(SearchAddress).to receive(:gets).and_return(key_word)
+
+        expect(SearchAddress.interactive_operation { |key| break key }).to eq yield_param
+      end
     end
 
-    it "" do
-      search_address_mock = class_double(SearchAddress)
-      allow(SearchAddress).to receive(:gets).and_return(key_word)
+    context "when key_word includs space" do
+      it "should retrun array from which impurities has been taken" do
+        allow(SearchAddress).to receive(:gets).and_return(key_word_include_space)
 
-      expect(SearchAddress.interactive_operation { |key| break key }).to eq yield_param
+        expect(SearchAddress.interactive_operation { |key| break key }).to eq yield_param
+      end
+    end
+
+    context "when key_word is '\\n'" do
+      it "has no error" do
+        expect(SearchAddress).to receive(:gets).and_return("\n", key_word).twice
+
+        expect{ SearchAddress.interactive_operation { |key| break key } }.to_not raise_error
+      end
+    end
+
+    context "when key_word is 'quit\\n', 'nil'" do
+      it "has no error" do
+        expect(SearchAddress).to receive(:gets).and_return("quit\n", nil).exactly(2).times
+        expect(SearchAddress).to receive(:exit_search).and_return(true).twice
+
+        expect{ SearchAddress.interactive_operation { |key| break key if key.nil? } }.to_not raise_error
+      end
     end
   end
 end

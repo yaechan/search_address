@@ -66,12 +66,13 @@ module SearchAddress
 
     def create_separated_data
       @@csv.each_with_index do |row, row_number|
+        yield(row, row_number) if block_given?
+
         postcode, *address = row.values_at(Define::COLUMN_POSTCODE,
                                            Define::COLUMN_PREFECTURE,
                                            Define::COLUMN_CITY,
                                            Define::COLUMN_TOWN)
 
-        yield(row, row_number) if block_given?
 
         if @separated.has_key?(postcode) && row[Define::COLUMN_OVER_TOWN_FLAG] == Define::NOT_APPLICABLE
           @separated[postcode] << address[2]

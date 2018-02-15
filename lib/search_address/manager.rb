@@ -16,17 +16,14 @@ module Manager
       print "\r\e[2K入力:"
       input = gets
 
-      case input
-      when nil, "quit\n"
+      key_words = input && get_key_words(input)
+
+      case key_words
+      when nil, "quit".split(//)
         exit_search
-      when "\n"
+      when []
         next
       end
-
-      key_words = input.chomp
-                       .encode("UTF-8", undef: :replace)
-                       .gsub(/(\s|[[:blank:]])/, "")
-                       .split(//)
 
       puts "出力:"
 
@@ -36,6 +33,13 @@ module Manager
   end
 
   private
+
+  def get_key_words(input)
+    input.chomp
+         .encode("UTF-8", undef: :replace)
+         .gsub(/(\s|[[:blank:]])/, "")
+         .split(//)
+  end
 
   def setup_thread(output)
     thread = start_thread(output)

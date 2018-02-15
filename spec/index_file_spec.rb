@@ -10,7 +10,10 @@ RSpec.describe SearchAddress::IndexFile do
     end
   end
 
-  let(:index_file) { SearchAddress::IndexFile.new }
+  let(:index_file) do
+    allow(SearchAddress::IndexFile.new).to receive(:read_csv_file).and_return(true)
+    SearchAddress::IndexFile.new
+  end
 
   describe "#new" do
     subject { index_file }
@@ -77,6 +80,15 @@ RSpec.describe SearchAddress::IndexFile do
 
       index_file.read
       expect(index_file.data).to eq data
+    end
+  end
+
+  describe "#read_csv_file" do
+    it "raise error" do
+      allow(File).to receive(:exist?).and_return(false)
+      #expect(Kernel).to receive(:exit!).and_return(true).once
+
+      #expect{ index_file.send(:read_csv_file) }.to raise_error
     end
   end
 end

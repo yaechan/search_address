@@ -25,7 +25,7 @@ module Manager
 
       key_words = input.chomp
                        .encode("UTF-8", undef: :replace)
-                       .gsub(/(\s| )/, "")
+                       .gsub(/(\s|[[:blank:]])/, "")
                        .split(//)
 
       puts "出力:"

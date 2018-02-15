@@ -72,7 +72,7 @@ RSpec.describe Manager do
 
     context "when key_word don't includ space" do
       it "should retrun array from which impurities has been taken" do
-        allow(SearchAddress).to receive(:gets).and_return(key_word)
+        expect(SearchAddress).to receive(:gets).and_return(key_word).once
 
         expect(SearchAddress.interactive_operation { |key| break key }).to eq yield_param
       end
@@ -80,14 +80,14 @@ RSpec.describe Manager do
 
     context "when key_word includs space" do
       it "should retrun array from which impurities has been taken" do
-        allow(SearchAddress).to receive(:gets).and_return(key_word_include_space)
+        expect(SearchAddress).to receive(:gets).and_return(key_word_include_space).once
 
         expect(SearchAddress.interactive_operation { |key| break key }).to eq yield_param
       end
     end
 
     context "when key_word is '\\n'" do
-      it "has no error" do
+      it "shoud not raise Exception" do
         expect(SearchAddress).to receive(:gets).and_return("\n", key_word).twice
 
         expect{ SearchAddress.interactive_operation { |key| break key } }.to_not raise_error
@@ -95,8 +95,8 @@ RSpec.describe Manager do
     end
 
     context "when key_word is 'quit\\n', 'nil'" do
-      it "has no error" do
-        expect(SearchAddress).to receive(:gets).and_return("quit\n", nil).exactly(2).times
+      it "shoud not raise Exception" do
+        expect(SearchAddress).to receive(:gets).and_return("quit\n", nil).twice
         expect(SearchAddress).to receive(:exit_search).and_return(true).twice
 
         expect{ SearchAddress.interactive_operation { |key| break key if key.nil? } }.to_not raise_error

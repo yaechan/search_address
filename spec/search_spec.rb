@@ -18,7 +18,4 @@ RSpec.describe Search do
       expect{ index_file.search_from_index(key_words) }.to_not raise_error
     end
   end
-
-  describe "#search_from_csv" do
-  end
 end

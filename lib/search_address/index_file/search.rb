@@ -1,4 +1,5 @@
 module Search
+  # 住所レコードデータの配列を格納
   @@csv = nil
 
   def search_from_index(key_words)
@@ -18,10 +19,7 @@ module Search
 
   def search_from_csv(row_numbers, key_words)
     row_numbers.each do |row_number|
-      postcode, *address = @@csv[row_number].values_at(SearchAddress::Define::COLUMN_POSTCODE,
-                                                       SearchAddress::Define::COLUMN_PREFECTURE,
-                                                       SearchAddress::Define::COLUMN_CITY,
-                                                       SearchAddress::Define::COLUMN_TOWN)
+      postcode, *address = get_postcode_and_address(@@csv[row_number])
       address[2]         = @separated[postcode].join if @separated.has_key?(postcode)
       pattern            = /^#{key_words.reduce("") { |memo, char| memo << "(?=.*#{char})" }}/
 
@@ -31,5 +29,12 @@ module Search
                     .join(",")
       end
     end
+  end
+
+  def get_postcode_and_address(row)
+    row.values_at(SearchAddress::Define::COLUMN_POSTCODE,
+                  SearchAddress::Define::COLUMN_PREFECTURE,
+                  SearchAddress::Define::COLUMN_CITY,
+                  SearchAddress::Define::COLUMN_TOWN)
   end
 end

@@ -82,15 +82,6 @@ RSpec.describe SearchAddress::IndexFile do
       expect(index_file.data).to eq data
     end
   end
-
-  describe "#read_csv_file" do
-    it "raise error" do
-      allow(File).to receive(:exist?).and_return(false)
-      #expect(Kernel).to receive(:exit!).and_return(true).once
-
-      #expect{ index_file.send(:read_csv_file) }.to raise_error
-    end
-  end
 end
 
 

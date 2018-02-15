@@ -13,24 +13,24 @@ module SearchAddress
     end
 
     attr_accessor :data, :separated
+
+    # @data      インデックスデータを格納
+    # @separated 要連結住所データを格納
     def initialize
       @data      = Hash.new { |hash, key| hash[key] = [] }
-      @separated = {}
+      @separated = Hash.new { |hash, key| hash[key] = [] }
 
       read_csv_file if @@csv.nil?
     end
 
     def create
       create_separated_data do |row, row_number|
-         postcode, *address = row.values_at(Define::COLUMN_POSTCODE,
-                                            Define::COLUMN_PREFECTURE,
-                                            Define::COLUMN_CITY,
-                                            Define::COLUMN_TOWN)
+        postcode, *address = get_postcode_and_address(row)
 
-         address.join
-                .to_ngram_index(2) do |index_key|
+        address.join
+               .to_ngram_index do |index_key|
           @data[index_key] |= [row_number]
-         end
+        end
       end
 
       create_index_file
@@ -52,13 +52,14 @@ module SearchAddress
     end
 
     def read_csv_file
-      if File.exist?(Define::CSV_FILE_PATH)
-        file  = File.open(Define::CSV_FILE_PATH, "rb:Shift_JIS:UTF-8", undef: :replace)
-        @@csv = CSV.parse(file)
-        file.close
+        if File.exist?(Define::CSV_FILE_PATH)
+        File.open(Define::CSV_FILE_PATH, "rb:Shift_JIS:UTF-8", undef: :replace) do |file|
+          @@csv = CSV.parse(file)
+        end
       else
         raise SearchAddressError, "住所データファイルが存在しません(search_address/download/KEN_ALL.csv)"
       end
+
     rescue SearchAddressError => error
       puts "\r\e[2K#{error.message}"
       exit!
@@ -68,25 +69,22 @@ module SearchAddress
       @@csv.each_with_index do |row, row_number|
         yield(row, row_number) if block_given?
 
-        postcode, *address = row.values_at(Define::COLUMN_POSTCODE,
-                                           Define::COLUMN_PREFECTURE,
-                                           Define::COLUMN_CITY,
-                                           Define::COLUMN_TOWN)
+        postcode, *address = get_postcode_and_address(row)
 
-
-        if @separated.has_key?(postcode) && row[Define::COLUMN_OVER_TOWN_FLAG] == Define::NOT_APPLICABLE
+        # 住所レコードの12番目要素が"1"の要素は1つの郵便番号に対して複数のレコードが存在する為、要結合レコードの判定をできない。
+        # よって12番目の要素が"0"のレコードに絞って要結合レコードを探す
+        if row[Define::COLUMN_OVER_TOWN_FLAG] == Define::NOT_APPLICABLE
           @separated[postcode] << address[2]
-        elsif row[Define::COLUMN_OVER_TOWN_FLAG] == Define::NOT_APPLICABLE
-          @separated[postcode] = [address[2]]
         end
       end
+
       @separated.select { |postcode, row_numbers| row_numbers.size > 1 }
     end
   end
 end
 
 class String
-  def to_ngram_index(n)
+  def to_ngram_index(n=2)
     each_char.each_cons(n) do |chars|
       yield chars.join
     end

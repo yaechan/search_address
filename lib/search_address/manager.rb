@@ -43,7 +43,9 @@ module Manager
 
   def setup_thread(output)
     thread = start_thread(output)
+
     data   = yield
+
     kill_thread(thread)
 
     data
@@ -52,9 +54,11 @@ module Manager
   def start_thread(output, sleep_time=1)
     Thread.start do
       Thread.pass
+
       1.step do |step_number|
         print "\r\e[2K#{output + ("." * (step_number % 4))}"
         sleep sleep_time
+
         $stdout.flush
       end
     end
@@ -68,5 +72,4 @@ module Manager
     puts "\n終了します"
     exit!
   end
-
 end

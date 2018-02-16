@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    search_address (1.0.0)
+    search_address (1.1.0)
 
 GEM
   remote: https://rubygems.org/

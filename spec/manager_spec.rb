@@ -104,11 +104,11 @@ RSpec.describe Manager do
     end
 
     context "when Interrupt" do
-      it "shuld raise Exception" do
-        expect(SearchAddress).to receive(:gets).and_return(->{ raise Interrupt })
-        allow(SearchAddress).to  receive(:exit_search).and_return(true)
+      it "shuld not raise Exception" do
+        expect(SearchAddress).to receive(:gets).and_raise(Interrupt)
+        expect(SearchAddress).to receive(:exit_search).and_return(true).once
 
-        expect { SearchAddress.interactive_operation { |key| break key } }.to raise_error
+        expect { SearchAddress.interactive_operation { |key| break key } }.to_not raise_error
       end
     end
   end

@@ -30,6 +30,9 @@ module Manager
       yield key_words
 
     end
+
+  rescue Interrupt
+    exit_search
   end
 
   private
